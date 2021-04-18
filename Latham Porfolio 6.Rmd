@@ -13,3 +13,57 @@ data <- read.csv("Data.csv")
 
 ```
 
+I currently only have complete data for 33 participants so I'm starting off by filtering the dataset to only include participants w/ complete data. 
+
+```{r filter}
+
+data <- data %>% 
+  filter(Phon.Switch > 0)
+data
+
+```
+
+Currently all of my data is separated out by phonemic and semantic fluency since clustering and switching were scored separately for these 2 assessments so I am averaging scores across the 2 types of fluency tasks to get mean clustering and switching score. 
+
+```{r combining.phon.semantic}
+
+data <- data %>% 
+  mutate(mean.cs = (Sem.MCS + Phon.MCS)/2)
+
+data <- data %>% 
+  mutate(mean.switch = (Sem.Switches + Phon.Switch)/2)
+
+```
+
+```{r visualizing.cog.relationships}
+
+data %>% 
+  ggplot(aes(x = mean.cs, y = TRAILS.B.TIME)) + geom_point()
+
+summarize(data, cor(mean.cs, TRAILS.B.TIME))
+
+data %>% 
+  ggplot(aes(x = mean.switch, y = TRAILS.B.TIME)) + geom_point()
+
+summarize(data, cor(mean.switch, TRAILS.B.TIME))
+
+data %>% 
+  ggplot(aes(x = mean.cs, y = MINT.TOTAL)) + geom_point()
+
+summarize(data, cor(mean.cs, MINT.TOTAL))
+
+data %>% 
+  ggplot(aes(x = mean.switch, y = MINT.TOTAL)) + geom_point()
+
+summarize(data, cor(mean.switch, MINT.TOTAL))
+
+```
+Though the sample sizes are relatively small at this point, it looks like there may be a stronger relationship between Trails B performance and switching relatively to clustering. This makes sense given switching is believed to be more executive in nature and Trails B performance reflects executive functioning. The MINT correlations reveal less informaiton, but the visualizations are helpful and suggest that restricted range in the MINT may be problematic (many of the scores cluster aroudn 32 which is a perfect performance), this will likely make it more difficult to assess the relationship between semantic memory and clustering/switching ability. Now I'm going to see how these relationships look by group (aMCI vs. cog normal). 
+
+```{r cog.relations.by.group}
+
+data %>% 
+  ggplot(aes(x = mean.cs, y = TRAILS.B.TIME)) + geom_point() + facet_wrap(Group)
+
+```
+
