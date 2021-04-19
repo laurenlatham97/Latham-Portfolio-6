@@ -5,6 +5,9 @@ date: "4/18/2021"
 output: html_document
 ---
 
+The purpose of this portfolio piece is to combine some of the verbal fluency variables I have scored for to collapse across tasks, and look at the relationship between these variables and a couple of cognitive tasks to see if these aspects of verbal fluency performance reflect the hypothesized cognitive processes. 
+
+
 ```{r setut}
 
 library(tidyverse)
@@ -38,32 +41,74 @@ data <- data %>%
 ```{r visualizing.cog.relationships}
 
 data %>% 
-  ggplot(aes(x = mean.cs, y = TRAILS.B.TIME)) + geom_point()
+  ggplot(aes(x = mean.cs, y = TRAILS.B.TIME)) + geom_point(color = 'red') + labs(title = "Relationship between Cluster Size and Trails B Time", x = "Mean Cluster Size", y = "Trails B Time (seconds)")
 
 summarize(data, cor(mean.cs, TRAILS.B.TIME))
 
 data %>% 
-  ggplot(aes(x = mean.switch, y = TRAILS.B.TIME)) + geom_point()
+  ggplot(aes(x = mean.switch, y = TRAILS.B.TIME)) + geom_point(color = 'red') + labs(title = "Relationship between Switches and Trails B Time", x = 'Mean Number of Switches', y = 'Mean Trails B Time (seconds)')
 
 summarize(data, cor(mean.switch, TRAILS.B.TIME))
 
 data %>% 
-  ggplot(aes(x = mean.cs, y = MINT.TOTAL)) + geom_point()
+  ggplot(aes(x = mean.cs, y = MINT.TOTAL)) + geom_point(color = 'blue') + labs(title = "Relationship between Cluster Size and MINT Scores", x = "Mean Cluster Size", y = "MINT Total Score")
 
 summarize(data, cor(mean.cs, MINT.TOTAL))
 
 data %>% 
-  ggplot(aes(x = mean.switch, y = MINT.TOTAL)) + geom_point()
+  ggplot(aes(x = mean.switch, y = MINT.TOTAL)) + geom_point(color = 'blue') + labs(title = "Relationship between Switches and MINT Total Score", x = "Mean Number of Switches", y = "MINT Total Score")
 
 summarize(data, cor(mean.switch, MINT.TOTAL))
 
 ```
-Though the sample sizes are relatively small at this point, it looks like there may be a stronger relationship between Trails B performance and switching relatively to clustering. This makes sense given switching is believed to be more executive in nature and Trails B performance reflects executive functioning. The MINT correlations reveal less informaiton, but the visualizations are helpful and suggest that restricted range in the MINT may be problematic (many of the scores cluster aroudn 32 which is a perfect performance), this will likely make it more difficult to assess the relationship between semantic memory and clustering/switching ability. Now I'm going to see how these relationships look by group (aMCI vs. cog normal). 
+Though the sample sizes are relatively small at this point, it looks like there may be a stronger relationship between Trails B performance and switching relatively to clustering. This makes sense given switching is believed to be more executive in nature and Trails B performance reflects executive functioning. The MINT correlations reveal less information, but the visualizations are helpful and suggest that restricted range in the MINT may be problematic (many of the scores cluster around 32 which is a perfect performance), this will likely make it more difficult to assess the relationship between semantic memory and clustering/switching ability. Now I'm going to see how these relationships look by group (aMCI vs. cog normal). 
 
-```{r cog.relations.by.group}
+```{r cog.relations.by.group.cs}
 
 data %>% 
-  ggplot(aes(x = mean.cs, y = TRAILS.B.TIME)) + geom_point() + facet_wrap(Group)
+  ggplot(aes(x = mean.cs, y = TRAILS.B.TIME)) + geom_point() + facet_wrap("Group") + labs(title = "Relationship between Cluster Size and Trails B Time by Group", x = "Mean Cluster Size", y = "Trails B Time (seconds)")
 
+cor.TRAILS.B.TIME <- data %>% 
+  group_by(Group) %>% 
+  summarize(cor(mean.cs, TRAILS.B.TIME))
+
+cor.TRAILS.B.TIME
+
+data %>% 
+  ggplot(aes(x = mean.cs, y = MINT.TOTAL)) + geom_point() + facet_wrap("Group") + labs(title = "Relationship between Mean Cluster Size and MINT Total Score by Group", x = "Mean Cluster Size", y = "MINT Total Score")
+
+cor.MINT <- data %>% 
+  group_by(Group) %>% 
+  summarize(cor(mean.cs, MINT.TOTAL))
+
+cor.MINT
 ```
 
+Trails B: There appear to be modest correlations between Trails B Time and Mean Cluster Size for both groups, but the correlation is slightly stronger for the MCI group (group 2) relative to the control group. By looking at these visualizations, it can be seen that the controls cluster between 50 and 100 seconds on Trail B completion time, so the lower correlation in this group is likely due to restricted range here. 
+
+MINT Correlations: Here, the difference in correlations between the group is even stronger, with almost no correlation for controls, and a relatively strong correlation for MCI. The fuller range in MINT scores in the MCI group allows up to see the relationship between semantic memory integrity (as reflected by MINT scores) and cluster size. 
+
+```{r cog.relations.by.group.switch}
+
+data %>% 
+  ggplot(aes(x = mean.switch, y = TRAILS.B.TIME)) + geom_point() + facet_wrap("Group") + labs(title = "Relationship between Switches and Trails B Time by Group", x = "Mean Number of Switches", y = "Trails B Time (seconds)")
+
+cor.TRAILS.B.TIME <- data %>% 
+  group_by(Group) %>% 
+  summarize(cor(mean.switch, TRAILS.B.TIME))
+
+cor.TRAILS.B.TIME
+
+data %>% 
+  ggplot(aes(x = mean.switch, y = MINT.TOTAL)) + geom_point() + facet_wrap("Group") + labs(title = "Relationship between Number of Switches and MINT Total Score by Group", x = "Mean Number of Switches", y = "MINT Total Score")
+
+cor.MINT <- data %>% 
+  group_by(Group) %>% 
+  summarize(cor(mean.switch, MINT.TOTAL))
+
+cor.MINT
+```
+
+Trails B: The correlations are comparable across groups with both showing a modest negative relationship between Trails B Time and number of switches.
+
+MINT: Here there is a very strong (and as of right now somewhat inexplicable) relationship between MINT scores and number of switches in the controls and next to no relationship between these variables in the MCI group. Looking at these graphs side by side is very helpful, I will need to revisit these correlations once I have all of my data to better understand what might be going on here. 
