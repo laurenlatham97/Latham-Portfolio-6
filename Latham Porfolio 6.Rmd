@@ -2,7 +2,7 @@
 title: "Latham Portfolio 6"
 author: "Lauren"
 date: "4/18/2021"
-output: html_document
+output: github_document
 ---
 
 The purpose of this portfolio piece is to combine some of the verbal fluency variables I have scored for to collapse across tasks, and look at the relationship between these variables and a couple of cognitive tasks to see if these aspects of verbal fluency performance reflect the hypothesized cognitive processes. 
